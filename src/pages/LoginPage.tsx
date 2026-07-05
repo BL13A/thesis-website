@@ -94,7 +94,7 @@ export function LoginPage() {
   }
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-[#0b1120] text-[#f8fafc]">
+    <div className="relative flex min-h-screen flex-col overflow-x-hidden bg-[#0b1120] text-[#f8fafc]">
       <div
         className="pointer-events-none absolute inset-0"
         style={{
@@ -124,7 +124,20 @@ export function LoginPage() {
         }}
       />
 
-      <div className="relative z-10 flex min-h-screen items-center justify-center px-5 py-10 sm:px-8">
+      <header className="relative z-10 flex items-center justify-between border-b border-[rgba(148,163,184,0.12)] px-5 py-4 sm:px-8">
+        <div className="flex items-center gap-2.5">
+          <div
+            className="flex h-8 w-8 items-center justify-center rounded-lg"
+            style={{ background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)' }}
+          >
+            <ScanEye className="h-[18px] w-[18px] text-white" strokeWidth={2} />
+          </div>
+          <span className="text-sm font-bold tracking-tight text-[#f8fafc]">TileVision</span>
+        </div>
+        <span className="text-xs font-medium text-[#64748b]">Management Portal</span>
+      </header>
+
+      <div className="relative z-10 flex flex-1 items-center justify-center px-5 py-10 sm:px-8">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -236,6 +249,12 @@ export function LoginPage() {
           </div>
         </motion.div>
       </div>
+
+      <footer className="relative z-10 border-t border-[rgba(148,163,184,0.12)] px-5 py-4 text-center sm:px-8">
+        <p className="text-xs text-[#64748b]">
+          &copy; {new Date().getFullYear()} TileVision · AI-Assisted Tile Defect Documentation and Decision Support System
+        </p>
+      </footer>
 
       <ForgotPasswordModal
         open={forgotOpen}
