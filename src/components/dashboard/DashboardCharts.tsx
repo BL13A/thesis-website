@@ -81,12 +81,27 @@ function buildSupplierPerformance(suppliers: Supplier[]) {
   }));
 }
 
+function buildRejectedBySupplier(inspections: Inspection[]) {
+  const buckets = new Map<string, number>();
+  for (const insp of inspections) {
+    const isRejected = insp.decision === 'Rejected' || insp.inventoryStatus === 'Rejected';
+    if (!isRejected) continue;
+    const supplier = insp.supplier?.trim() || 'Unknown Supplier';
+    buckets.set(supplier, (buckets.get(supplier) ?? 0) + 1);
+  }
+  return Array.from(buckets.entries())
+    .sort(([, a], [, b]) => b - a)
+    .slice(0, 8)
+    .map(([name, rejected]) => ({ name: name.slice(0, 16), rejected }));
+}
+
 export function DashboardCharts({ summary, inspections, suppliers = [] }: DashboardChartsProps) {
   const inventoryData = buildInventoryDistribution(summary);
   const inspectionTrend = buildInspectionTrend(inspections);
   const defectTrend = buildDefectTrend(inspections);
   const reorderTrend = buildReorderTrend(summary);
   const supplierPerformance = buildSupplierPerformance(suppliers);
+  const rejectedBySupplier = buildRejectedBySupplier(inspections);
 
   return (
     <div className="grid gap-6 xl:grid-cols-2">
@@ -155,6 +170,24 @@ export function DashboardCharts({ summary, inspections, suppliers = [] }: Dashbo
           </ResponsiveContainer>
         </div>
       </div>
+
+      {rejectedBySupplier.length > 0 ? (
+        <div className="glass-card rounded-2xl border border-border/50 p-6 xl:col-span-2">
+          <h3 className="mb-4 text-lg font-semibold">Rejected Tiles by Supplier</h3>
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={rejectedBySupplier}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.2)" />
+                <XAxis dataKey="name" tick={{ fontSize: 11 }} />
+                <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="rejected" fill="#ef4444" name="Rejected Tiles" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      ) : null}
 
       {supplierPerformance.length > 0 ? (
         <div className="glass-card rounded-2xl border border-border/50 p-6 xl:col-span-2">
